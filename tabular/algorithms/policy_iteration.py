@@ -28,8 +28,12 @@ def policy_evaluation(
                     * value_critic.get_value(transition.next_state)
                 )
 
-            diff = value_critic.set_value(state, value_estimate)
-            delta = max(delta, diff)
+            value_difference = value_critic.value_difference(
+                state, value_estimate
+            )
+            if value_difference > 0:
+                value_critic.set_value(state, value_estimate)
+                delta = max(delta, value_difference)
 
         if delta < stop_threshold:
             # If the value function did not change, consider that
@@ -60,8 +64,9 @@ def policy_improvement(
                     * value_critic.get_value(transition.next_state)
                 )
 
-        action_changed = actor.set_action(state, np.argmax(q_value_estimate))
-        if action_changed:
+        action_different = actor.action_different(state, action)
+        if action_different:
+            actor.set_action(state, np.argmax(q_value_estimate))
             policy_stable = False
 
     return policy_stable

@@ -35,11 +35,13 @@ class TabularActor:
             action, self.num_actions
         ), f"Action `{action}` is invalid."
 
-        if self.actions[state] == action:
-            return False
-
         self.actions[state] = action
-        return True
+
+    def action_different(self, state: int, action: int) -> bool:
+        assert _valid_action(
+            action, self.num_actions
+        ), f"Action `{action}` is invalid."
+        return self.actions[state] != action
 
 
 class TabularValueCritic:
@@ -56,17 +58,25 @@ class TabularValueCritic:
         ), f"State `{state}` is invalid."
         return self.values[state]
 
-    def set_value(self, state: int, value: float) -> float:
+    def set_value(self, state: int, value: float) -> None:
         assert _valid_state(
             state, self.num_states
         ), f"State `{state}` is invalid."
-        diff = np.abs(self.values[state] - value)
-
-        if diff == 0.0:
-            return 0.0
 
         self.values[state] = value
-        return diff
+
+    def value_difference(self, state: int, value: float) -> float:
+        assert _valid_state(
+            state, self.num_states
+        ), f"State `{state}` is invalid."
+
+        return np.abs(self.values[state] - value)
+
+
+class TabularQCritic:
+    def __init__(self, num_states: int, num_actions: int) -> None:
+        self.num_states = num_states
+        self.num_actions = num_actions
 
 
 @dataclass
