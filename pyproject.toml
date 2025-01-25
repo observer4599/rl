@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "rl"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+gymnasium = { extras = ["toy-text"], version = "1.0.0" }
+tyro = "0.9.13"
+jaxtyping = "0.2.36"
+moviepy = "2.1.2"
+mypy = "^1.14.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
