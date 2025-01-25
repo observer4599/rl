@@ -17,15 +17,23 @@ class TabularActor:
         self.num_states = num_states
         self.num_actions = num_actions
 
-        self.actions: Integer[np.ndarray, "states"] = np.ones(num_states, dtype=int)
+        self.actions: Integer[np.ndarray, "states"] = np.ones(
+            num_states, dtype=int
+        )
 
     def get_action(self, state: int) -> int:
-        assert _valid_state(state, self.num_states), f"State `{state}` is invalid."
+        assert _valid_state(
+            state, self.num_states
+        ), f"State `{state}` is invalid."
         return self.actions[state]
 
     def set_action(self, state: int, action: int) -> bool:
-        assert _valid_state(state, self.num_states), f"State `{state}` is invalid."
-        assert _valid_action(action, self.num_actions), f"Action `{action}` is invalid."
+        assert _valid_state(
+            state, self.num_states
+        ), f"State `{state}` is invalid."
+        assert _valid_action(
+            action, self.num_actions
+        ), f"Action `{action}` is invalid."
 
         if self.actions[state] == action:
             return False
@@ -38,14 +46,20 @@ class TabularValueCritic:
     def __init__(self, num_states: int) -> None:
         self.num_states = num_states
 
-        self.values: Integer[np.ndarray, "states"] = np.zeros(num_states, dtype=float)
+        self.values: Integer[np.ndarray, "states"] = np.zeros(
+            num_states, dtype=float
+        )
 
     def get_value(self, state: int) -> float:
-        assert _valid_state(state, self.num_states), f"State `{state}` is invalid."
+        assert _valid_state(
+            state, self.num_states
+        ), f"State `{state}` is invalid."
         return self.values[state]
 
     def set_value(self, state: int, value: float) -> float:
-        assert _valid_state(state, self.num_states), f"State `{state}` is invalid."
+        assert _valid_state(
+            state, self.num_states
+        ), f"State `{state}` is invalid."
         diff = np.abs(self.values[state] - value)
 
         if diff == 0.0:

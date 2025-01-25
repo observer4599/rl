@@ -2,7 +2,9 @@ from tabular.components import TabularActor
 import gymnasium as gym
 
 
-def evaluate(env: gym.Env, actor: TabularActor, num_eval_ep: int, seed: int) -> None:
+def evaluate(
+    env: gym.Env, actor: TabularActor, num_eval_ep: int, seed: int
+) -> None:
     observation, _ = env.reset(seed=seed)
     for _ in range(num_eval_ep):
         episode_done = False
