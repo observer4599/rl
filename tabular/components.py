@@ -1,15 +1,17 @@
 import numpy as np
-from jaxtyping import Integer
+from jaxtyping import Integer, Float
 from dataclasses import dataclass
 import gymnasium as gym
 
 
-def _valid_state(state: int, num_states: int) -> bool:
-    return 0 <= state < num_states
+def _is_valid_state(state: int, num_states: int) -> None:
+    if num_states <= state < 0:
+        raise ValueError(f"State `{state}` is invalid.")
 
 
-def _valid_action(action: int, num_actions: int) -> bool:
-    return 0 <= action < num_actions
+def _is_valid_action(action: int | np.integer, num_actions: int) -> None:
+    if num_actions <= action < 0:
+        raise ValueError(f"Action `{action}` is invalid.")
 
 
 class TabularActor:
@@ -22,25 +24,17 @@ class TabularActor:
         )
 
     def get_action(self, state: int) -> int:
-        assert _valid_state(
-            state, self.num_states
-        ), f"State `{state}` is invalid."
+        _is_valid_state(state, self.num_states)
         return self.actions[state]
 
     def set_action(self, state: int, action: int) -> bool:
-        assert _valid_state(
-            state, self.num_states
-        ), f"State `{state}` is invalid."
-        assert _valid_action(
-            action, self.num_actions
-        ), f"Action `{action}` is invalid."
+        _is_valid_state(state, self.num_states)
+        _is_valid_action(action, self.num_actions)
 
         self.actions[state] = action
 
-    def action_different(self, state: int, action: int) -> bool:
-        assert _valid_action(
-            action, self.num_actions
-        ), f"Action `{action}` is invalid."
+    def is_action_different(self, state: int, action: int) -> bool:
+        _is_valid_action(action, self.num_actions)
         return self.actions[state] != action
 
 
@@ -48,35 +42,53 @@ class TabularValueCritic:
     def __init__(self, num_states: int) -> None:
         self.num_states = num_states
 
-        self.values: Integer[np.ndarray, "states"] = np.zeros(
+        self.values: Float[np.ndarray, "states"] = np.zeros(
             num_states, dtype=float
         )
 
     def get_value(self, state: int) -> float:
-        assert _valid_state(
-            state, self.num_states
-        ), f"State `{state}` is invalid."
+        _is_valid_state(state, self.num_states)
         return self.values[state]
 
-    def set_value(self, state: int, value: float) -> None:
-        assert _valid_state(
-            state, self.num_states
-        ), f"State `{state}` is invalid."
+    def set_value(self, state: int, value_estimate: float) -> None:
+        _is_valid_state(state, self.num_states)
 
-        self.values[state] = value
+        self.values[state] = value_estimate
 
-    def value_difference(self, state: int, value: float) -> float:
-        assert _valid_state(
-            state, self.num_states
-        ), f"State `{state}` is invalid."
+    def get_value_difference(self, state: int, value_estimate: float) -> float:
+        _is_valid_state(state, self.num_states)
 
-        return np.abs(self.values[state] - value)
+        return np.abs(self.values[state] - value_estimate)
 
 
 class TabularQCritic:
     def __init__(self, num_states: int, num_actions: int) -> None:
         self.num_states = num_states
         self.num_actions = num_actions
+
+        self.q_values: Float[np.ndarray, "state action"] = np.zeros(
+            (num_states, num_actions), dtype=float
+        )
+
+    def get_value(self, state: int, action: int) -> float:
+        _is_valid_state(state, self.num_states)
+        _is_valid_action(action, self.num_actions)
+
+        return self.q_values[state, action]
+
+    def set_value(self, state: int, action: int, value_estimate: float) -> None:
+        _is_valid_state(state, self.num_states)
+        _is_valid_action(action, self.num_actions)
+
+        self.q_values[state, action] = value_estimate
+
+    def get_value_difference(
+        self, state: int, action: int, value_estimate: float
+    ) -> float:
+        _is_valid_state(state, self.num_states)
+        _is_valid_action(action, self.num_actions)
+
+        return np.abs(self.q_values[state, action] - value_estimate)
 
 
 @dataclass
@@ -114,7 +126,7 @@ class TabularMDP:
         return list(self.model.keys())
 
     def get_actions(self, state: int) -> list[int]:
-        assert state in self.get_states(), f"State `{state}` is invalid."
+        _is_valid_state(state, len(self.model))
         return list(self.model[state].keys())
 
     def get_transitions(self, state: int, action: int) -> list[Transition]:

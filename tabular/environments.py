@@ -5,7 +5,7 @@ import logging
 LEGAL_FULL_MDP_ENV = Literal["FrozenLake-v1", "CliffWalking-v0", "Taxi-v3"]
 
 
-def setup_full_mdp_env(env_id: gym.Env, is_slippery: bool) -> gym.Env:
+def setup_full_mdp_env(env_id: str, is_slippery: bool) -> gym.Env:
     assert env_id in get_args(
         LEGAL_FULL_MDP_ENV
     ), f"env_id: {env_id} is invalid, choose from {LEGAL_FULL_MDP_ENV}."

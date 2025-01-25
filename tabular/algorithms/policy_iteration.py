@@ -28,7 +28,7 @@ def policy_evaluation(
                     * value_critic.get_value(transition.next_state)
                 )
 
-            value_difference = value_critic.value_difference(
+            value_difference = value_critic.get_value_difference(
                 state, value_estimate
             )
             if value_difference > 0:
@@ -64,7 +64,7 @@ def policy_improvement(
                     * value_critic.get_value(transition.next_state)
                 )
 
-        action_different = actor.action_different(state, action)
+        action_different = actor.is_action_different(state, action)
         if action_different:
             actor.set_action(state, np.argmax(q_value_estimate))
             policy_stable = False
