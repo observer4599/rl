@@ -17,10 +17,11 @@ from algorithms.value_iteration import value_iteration
 
 @dataclass
 class Config:
-    seed: int = 8779
-    env_id: LEGAL_FULL_MDP_ENV = "FrozenLake-v1"
+    env_id: LEGAL_FULL_MDP_ENV
 
     algorithm: Literal["policy_iteration", "value_iteration"]
+    seed: int = 8779
+    """Seed for reproducibility."""
     is_slippery: bool = False
     """Add stochastity to the environment."""
     discount_factor: float = 0.9
