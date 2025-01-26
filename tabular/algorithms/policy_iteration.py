@@ -64,7 +64,9 @@ def policy_improvement(
                     * value_critic.get_value(transition.next_state)
                 )
 
-        action_different = actor.is_action_different(state, action)
+        action_different = actor.is_action_different(
+            state, np.argmax(q_value_estimate)
+        )
         if action_different:
             actor.set_action(state, np.argmax(q_value_estimate))
             policy_stable = False
@@ -81,9 +83,9 @@ def policy_iteration(
     policy_stable: bool = False
 
     while not policy_stable:
-        policy_stable_crtic = policy_evaluation(
+        policy_stable = policy_stable or policy_evaluation(
             mdp, value_critic, actor, stop_threshold
         )
-        policy_stable_actor = policy_improvement(mdp, value_critic, actor)
-
-        policy_stable = policy_stable_crtic or policy_stable_actor
+        policy_stable = policy_stable or policy_improvement(
+            mdp, value_critic, actor
+        )
