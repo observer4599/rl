@@ -1,4 +1,4 @@
-from tabular.rl_models import TabularActor
+from tabular.agent import TabularActor
 import gymnasium as gym
 
 

@@ -3,7 +3,8 @@ This file implements the Policy Iteration algoirthm shown on Page 80 of
 the book Reinforcement Learning, second edition by Sutton and Barto
 """
 
-from tabular.rl_models import TabularActor, TabularMDP, TabularCritic
+from tabular.agent import TabularActor, TabularCritic
+from tabular.environments import TabularMDP
 
 
 def policy_evaluation(
@@ -21,7 +22,7 @@ def policy_evaluation(
                 for transition in mdp.get_transitions(state, action):
                     q_estimate += transition.proba * (
                         transition.reward
-                        + mdp.discount_factor
+                        + mdp._discount_factor
                         * critic.get_value(
                             transition.next_state,
                             actor.get_action(transition.next_state),

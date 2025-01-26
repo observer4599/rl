@@ -2,11 +2,11 @@ from dataclasses import dataclass
 from typing import Literal
 import tyro
 import numpy as np
-from tabular.rl_models import (
+from tabular.agent import (
     TabularActor,
-    TabularMDP,
     TabularCritic,
 )
+from tabular.environments import TabularMDP
 from tabular.utils import seed_everything
 from tabular.evaluation import evaluate
 import logging
