@@ -45,14 +45,14 @@ def main() -> None:
 
     mdp = TabularMDP(env, cfg.discount_factor)
     actor = TabularActor(env.observation_space.n, env.action_space.n)
-    q_value_critic = TabularCritic(env.observation_space.n, env.action_space.n)
+    critic = TabularCritic(env.observation_space.n, env.action_space.n)
 
     logging.info("Start learning.")
     match cfg.algorithm:
         case "policy_iteration":
-            policy_iteration(mdp, q_value_critic, actor, cfg.stop_threshold)
+            policy_iteration(mdp, critic, actor, cfg.stop_threshold)
         case "value_iteration":
-            value_iteration(mdp, q_value_critic, actor, cfg.stop_threshold)
+            value_iteration(mdp, critic, actor, cfg.stop_threshold)
 
     logging.info("Start evaluation.")
     evaluate(env, actor, cfg.num_eval_ep, cfg.seed)

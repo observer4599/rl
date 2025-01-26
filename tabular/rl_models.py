@@ -27,13 +27,13 @@ class TabularActor:
         _is_valid_state(state, self.num_states)
         return self.actions[state]
 
-    def set_action(self, state: int, action: int) -> bool:
+    def set_action(self, state: int, action: int | np.integer) -> None:
         _is_valid_state(state, self.num_states)
         _is_valid_action(action, self.num_actions)
 
         self.actions[state] = action
 
-    def is_action_different(self, state: int, action: int) -> bool:
+    def is_action_different(self, state: int, action: int | np.integer) -> bool:
         _is_valid_action(action, self.num_actions)
         return self.actions[state] != action
 
@@ -47,7 +47,7 @@ class TabularCritic:
             (num_states, num_actions), dtype=float
         )
 
-    def get_max_action(self, state: int) -> int:
+    def get_max_action(self, state: int) -> np.integer:
         _is_valid_state(state, self.num_states)
         return np.argmax(self.q_values[state])
 
@@ -90,17 +90,13 @@ class Transition:
 
 class TabularMDP:
     def __init__(self, env: gym.Env, discount_factor: float) -> None:
-        """
-        dict[dict[list[tuple[float, int, float, bool]]]]
-        The environment model is structured as follows:
-        1. State
-        2. Action
-        3. A list of next states
-        4. Each next state is a tuple of
-        (transition probability, next state, reward, terminated)
-        """
         assert hasattr(env.unwrapped, "P")
-        self.model = env.unwrapped.P
+
+        Transitions = list[tuple[float, int, float, bool]]
+        Action = dict[int, Transitions]
+        State = dict[int, Action]
+
+        self.model: State = env.unwrapped.P
         self.discount_factor = discount_factor
 
     def get_states(self) -> list[int]:

@@ -18,7 +18,7 @@ def policy_evaluation(
 ) -> float:
     delta: float = 0.0
     for action in mdp.get_actions(state):
-        q_estimate = 0
+        q_estimate: float = 0.0
 
         for transition in mdp.get_transitions(state, action):
             q_estimate += transition.proba * (
