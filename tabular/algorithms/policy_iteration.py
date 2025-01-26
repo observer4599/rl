@@ -12,7 +12,7 @@ def policy_evaluation(
     value_critic: TabularValueCritic,
     actor: TabularActor,
     stop_threshold: float,
-) -> bool:
+) -> None:
 
     iter_counter = 0
     while True:
@@ -36,12 +36,7 @@ def policy_evaluation(
                 delta = max(delta, value_difference)
 
         if delta < stop_threshold:
-            # If the value function did not change, consider that
-            # the polcy has converged.
-            # Exercise 4.4
-            if iter_counter == 0:
-                return True
-            return False
+            break
 
         iter_counter += 1
 
@@ -83,9 +78,5 @@ def policy_iteration(
     policy_stable: bool = False
 
     while not policy_stable:
-        policy_stable = policy_stable or policy_evaluation(
-            mdp, value_critic, actor, stop_threshold
-        )
-        policy_stable = policy_stable or policy_improvement(
-            mdp, value_critic, actor
-        )
+        policy_evaluation(mdp, value_critic, actor, stop_threshold)
+        policy_stable = policy_improvement(mdp, value_critic, actor)
