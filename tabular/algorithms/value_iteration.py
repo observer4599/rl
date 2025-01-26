@@ -15,8 +15,8 @@ def policy_evaluation(
     q_critic: TabularQCritic,
     actor: TabularActor,
     state: int,
-    delta: float,
 ) -> float:
+    delta: float = 0.0
     for action in mdp.get_actions(state):
         q_value_estimate = 0
 
@@ -58,7 +58,7 @@ def value_iteration(
         delta: float = 0.0
 
         for state in mdp.get_states():
-            delta = policy_evaluation(mdp, q_critic, actor, state, delta)
+            delta = max(delta, policy_evaluation(mdp, q_critic, actor, state))
             policy_improvement(actor, q_critic, state)
         if delta < stop_threshold:
             break

@@ -3,67 +3,55 @@ This file implements the Policy Iteration algoirthm shown on Page 80 of
 the book Reinforcement Learning, second edition by Sutton and Barto
 """
 
-import numpy as np
-from tabular.rl_models import TabularActor, TabularMDP, TabularValueCritic
+from tabular.rl_models import TabularActor, TabularMDP, TabularQCritic
 
 
 def policy_evaluation(
     mdp: TabularMDP,
-    value_critic: TabularValueCritic,
+    q_critic: TabularQCritic,
     actor: TabularActor,
     stop_threshold: float,
 ) -> None:
 
-    iter_counter = 0
     while True:
         delta: float = 0.0
         for state in mdp.get_states():
-            value_estimate = 0.0
-            for transition in mdp.get_transitions(
-                state, actor.get_action(state)
-            ):
-                value_estimate += transition.proba * (
-                    transition.reward
-                    + mdp.discount_factor
-                    * value_critic.get_value(transition.next_state)
-                )
+            for action in mdp.get_actions(state):
+                q_estimate = 0.0
+                for transition in mdp.get_transitions(state, action):
+                    q_estimate += transition.proba * (
+                        transition.reward
+                        + mdp.discount_factor
+                        * q_critic.get_value(
+                            transition.next_state,
+                            actor.get_action(transition.next_state),
+                        )
+                    )
 
-            value_difference = value_critic.get_value_difference(
-                state, value_estimate
-            )
-            if value_difference > 0:
-                value_critic.set_value(state, value_estimate)
-                delta = max(delta, value_difference)
+                value_difference = q_critic.get_value_difference(
+                    state, action, q_estimate
+                )
+                if value_difference > 0:
+                    q_critic.set_value(state, action, q_estimate)
+                    delta = max(delta, value_difference)
 
         if delta < stop_threshold:
             break
 
-        iter_counter += 1
-
 
 def policy_improvement(
     mdp: TabularMDP,
-    value_critic: TabularValueCritic,
+    q_critic: TabularQCritic,
     actor: TabularActor,
 ) -> bool:
     policy_stable: bool = True
 
     for state in mdp.get_states():
-        q_value_estimate = np.zeros(len(mdp.get_actions(state)))
-
-        for action in mdp.get_actions(state):
-            for transition in mdp.get_transitions(state, action):
-                q_value_estimate[action] += transition.proba * (
-                    transition.reward
-                    + mdp.discount_factor
-                    * value_critic.get_value(transition.next_state)
-                )
-
         action_different = actor.is_action_different(
-            state, np.argmax(q_value_estimate)
+            state, q_critic.get_max_action(state)
         )
         if action_different:
-            actor.set_action(state, np.argmax(q_value_estimate))
+            actor.set_action(state, q_critic.get_max_action(state))
             policy_stable = False
 
     return policy_stable
@@ -71,12 +59,12 @@ def policy_improvement(
 
 def policy_iteration(
     mdp: TabularMDP,
-    value_critic: TabularValueCritic,
+    q_critic: TabularQCritic,
     actor: TabularActor,
     stop_threshold: float,
 ) -> None:
     policy_stable: bool = False
 
     while not policy_stable:
-        policy_evaluation(mdp, value_critic, actor, stop_threshold)
-        policy_stable = policy_improvement(mdp, value_critic, actor)
+        policy_evaluation(mdp, q_critic, actor, stop_threshold)
+        policy_stable = policy_improvement(mdp, q_critic, actor)

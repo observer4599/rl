@@ -5,7 +5,6 @@ import numpy as np
 from tabular.rl_models import (
     TabularActor,
     TabularMDP,
-    TabularValueCritic,
     TabularQCritic,
 )
 from tabular.utils import seed_everything
@@ -46,13 +45,12 @@ def main() -> None:
 
     mdp = TabularMDP(env, cfg.discount_factor)
     actor = TabularActor(env.observation_space.n, env.action_space.n)
-    value_critic = TabularValueCritic(env.observation_space.n)
     q_value_critic = TabularQCritic(env.observation_space.n, env.action_space.n)
 
     logging.info("Start learning.")
     match cfg.algorithm:
         case "policy_iteration":
-            policy_iteration(mdp, value_critic, actor, cfg.stop_threshold)
+            policy_iteration(mdp, q_value_critic, actor, cfg.stop_threshold)
         case "value_iteration":
             value_iteration(mdp, q_value_critic, actor, cfg.stop_threshold)
 
