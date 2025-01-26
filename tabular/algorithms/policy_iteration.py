@@ -4,7 +4,7 @@ the book Reinforcement Learning, second edition by Sutton and Barto
 """
 
 import numpy as np
-from tabular.components import TabularActor, TabularMDP, TabularValueCritic
+from tabular.rl_models import TabularActor, TabularMDP, TabularValueCritic
 
 
 def policy_evaluation(

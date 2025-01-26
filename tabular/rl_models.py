@@ -70,6 +70,10 @@ class TabularQCritic:
             (num_states, num_actions), dtype=float
         )
 
+    def get_max_action(self, state: int) -> int:
+        _is_valid_state(state, self.num_states)
+        return np.argmax(self.q_values[state])
+
     def get_value(self, state: int, action: int) -> float:
         _is_valid_state(state, self.num_states)
         _is_valid_action(action, self.num_actions)
