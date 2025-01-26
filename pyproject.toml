@@ -11,7 +11,7 @@ gymnasium = { extras = ["toy-text"], version = "1.0.0" }
 tyro = "0.9.13"
 jaxtyping = "0.2.36"
 moviepy = "2.1.2"
-mypy = "^1.14.1"
+mypy = "1.14.1"
 
 
 [build-system]
