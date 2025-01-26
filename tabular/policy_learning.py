@@ -5,7 +5,7 @@ import numpy as np
 from tabular.rl_models import (
     TabularActor,
     TabularMDP,
-    TabularQCritic,
+    TabularCritic,
 )
 from tabular.utils import seed_everything
 from tabular.evaluation import evaluate
@@ -45,7 +45,7 @@ def main() -> None:
 
     mdp = TabularMDP(env, cfg.discount_factor)
     actor = TabularActor(env.observation_space.n, env.action_space.n)
-    q_value_critic = TabularQCritic(env.observation_space.n, env.action_space.n)
+    q_value_critic = TabularCritic(env.observation_space.n, env.action_space.n)
 
     logging.info("Start learning.")
     match cfg.algorithm:

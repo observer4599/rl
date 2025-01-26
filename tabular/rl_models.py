@@ -38,30 +38,7 @@ class TabularActor:
         return self.actions[state] != action
 
 
-class TabularValueCritic:
-    def __init__(self, num_states: int) -> None:
-        self.num_states = num_states
-
-        self.values: Float[np.ndarray, "states"] = np.zeros(
-            num_states, dtype=float
-        )
-
-    def get_value(self, state: int) -> float:
-        _is_valid_state(state, self.num_states)
-        return self.values[state]
-
-    def set_value(self, state: int, value_estimate: float) -> None:
-        _is_valid_state(state, self.num_states)
-
-        self.values[state] = value_estimate
-
-    def get_value_difference(self, state: int, value_estimate: float) -> float:
-        _is_valid_state(state, self.num_states)
-
-        return np.abs(self.values[state] - value_estimate)
-
-
-class TabularQCritic:
+class TabularCritic:
     def __init__(self, num_states: int, num_actions: int) -> None:
         self.num_states = num_states
         self.num_actions = num_actions
