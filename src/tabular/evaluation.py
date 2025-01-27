@@ -1,4 +1,4 @@
-from tabular.agent import TabularActor
+from src.tabular.agent import TabularActor
 import gymnasium as gym
 
 

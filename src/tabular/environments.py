@@ -1,37 +1,27 @@
 import gymnasium as gym
-from typing import Literal, get_args
+from typing import Literal
 import logging
 from dataclasses import dataclass
-from utils import is_valid_state
+from src.tabular.utils import is_valid_state
 from jaxtyping import Float
 import numpy as np
 
 LEGAL_FULL_MDP_ENV = Literal["FrozenLake-v1", "CliffWalking-v0", "Taxi-v3"]
 
 
-def setup_full_mdp_env(env_id: str, is_slippery: bool) -> gym.Env:
-    assert env_id in get_args(
-        LEGAL_FULL_MDP_ENV
-    ), f"env_id: {env_id} is invalid, choose from {LEGAL_FULL_MDP_ENV}."
-
-    if env_id == "Taxi-v3":
-        env = gym.make(
-            env_id,
-            render_mode="rgb_array",
-        )
-        logging.warning(f"The argument `is_slippery` is not used in {env_id}.")
-    else:
+def prepare_env(env_id: str, num_eval_ep: int, is_slippery: bool) -> gym.Env:
+    if env_id in {"FrozenLake-v1", "CliffWalking-v0"}:
         env = gym.make(
             env_id,
             is_slippery=is_slippery,
             render_mode="rgb_array",
         )
+    else:
+        env = gym.make(env_id, render_mode="rgb_array")
+        logging.warning(f"The argument `is_slippery` is not used in {env_id}.")
 
-    return env
-
-
-def setup_env_wrappers(env: gym.Env, num_eval_ep: int) -> gym.Env:
     env = gym.wrappers.RecordEpisodeStatistics(env, buffer_length=num_eval_ep)
+
     return env
 
 
@@ -53,7 +43,8 @@ class Transition:
 
 class TabularMDP:
     def __init__(self, env: gym.Env, discount_factor: float) -> None:
-        assert hasattr(env.unwrapped, "P")
+        if not hasattr(env.unwrapped, "P"):
+            ValueError("Unable to access the model the environment.")
 
         Transitions = list[tuple[float, int, float, bool]]
         Action = dict[int, Transitions]

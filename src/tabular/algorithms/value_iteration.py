@@ -3,11 +3,11 @@ This file implements the Value Iteration algoirthm shown on Page 83 of
 the book Reinforcement Learning, second edition by Sutton and Barto
 """
 
-from tabular.agent import (
+from src.tabular.agent import (
     TabularActor,
     TabularCritic,
 )
-from tabular.environments import TabularMDP
+from src.tabular.environments import TabularMDP
 
 
 def policy_evaluation(
@@ -51,7 +51,7 @@ def value_iteration(
     mdp: TabularMDP,
     critic: TabularCritic,
     actor: TabularActor,
-    stop_threshold: float,
+    stop_threshold: float = 1e-8,
 ) -> None:
 
     while True:

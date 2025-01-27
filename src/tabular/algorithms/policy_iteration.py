@@ -3,8 +3,8 @@ This file implements the Policy Iteration algoirthm shown on Page 80 of
 the book Reinforcement Learning, second edition by Sutton and Barto
 """
 
-from tabular.agent import TabularActor, TabularCritic
-from tabular.environments import TabularMDP
+from src.tabular.agent import TabularActor, TabularCritic
+from src.tabular.environments import TabularMDP
 
 
 def policy_evaluation(
@@ -62,7 +62,7 @@ def policy_iteration(
     mdp: TabularMDP,
     critic: TabularCritic,
     actor: TabularActor,
-    stop_threshold: float,
+    stop_threshold: float = 1e-8,
 ) -> None:
     policy_stable: bool = False
 

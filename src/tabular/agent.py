@@ -1,6 +1,6 @@
 import numpy as np
 from jaxtyping import Integer, Float
-from utils import is_valid_state, is_valid_action
+from src.tabular.utils import is_valid_state, is_valid_action
 
 
 class TabularActor:

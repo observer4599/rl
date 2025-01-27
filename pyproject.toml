@@ -12,6 +12,7 @@ tyro = "0.9.13"
 jaxtyping = "0.2.36"
 moviepy = "2.1.2"
 mypy = "1.14.1"
+pytest = "^8.3.4"
 
 
 [build-system]
